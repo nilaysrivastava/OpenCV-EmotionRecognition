@@ -1,5 +1,7 @@
 # Expression Atlas
 
+**[Live demo — Expression Atlas](https://expression-atlas-nilay.onrender.com)** · Hosted on Render Free. The first visit after inactivity may take about a minute to wake the service.
+
 A refined, interactive frontend for facial-expression recognition, built around a project-specific CNN trained from scratch by Nilay Srivastava. Bring a portrait, try the public-domain sample, or use a browser camera. Inspect face regions, compare all seven expression scores, switch between faces, and download an observation as JSON.
 
 The original terminal-only project is preserved as a working CLI backed by the same inference service and preprocessing as the web app. No pretrained emotion-classification weights or simulated predictions are used. OpenCV’s Haar face detector is retained from the original project.

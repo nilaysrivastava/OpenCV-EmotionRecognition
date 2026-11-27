@@ -1,0 +1,41 @@
+{
+  "url": "https://expression-atlas-nilay.onrender.com",
+  "model_sha256": "f5773fae1cc6679d2dc0b1d2a7ea01130ce51fb2dcc4598b646edaba5df1764b",
+  "checks": [
+    {
+      "check": "health and exact trained model",
+      "status": 200
+    },
+    {
+      "check": "evaluation and test coverage",
+      "status": 200
+    },
+    {
+      "check": "public sample real prediction",
+      "status": 200,
+      "label": "Happy",
+      "score": 0.991897,
+      "inference_ms": 711.0
+    },
+    {
+      "check": "no face yields no classification",
+      "status": 200
+    },
+    {
+      "check": "invalid image",
+      "status": 422
+    },
+    {
+      "check": "unsupported format",
+      "status": 415
+    },
+    {
+      "check": "empty input",
+      "status": 400
+    },
+    {
+      "check": "frontend and security headers",
+      "status": 200
+    }
+  ]
+}

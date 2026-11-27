@@ -20,4 +20,10 @@
 
 ## Publication
 
-Source, runtime weights, notebooks and reports are committed to the original GitHub repository. A free Render web service is prepared with Python 3.11.15, `pip install -r requirements.txt`, and `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, in My Workspace/Singapore. Automatic approval review requires explicit authorization for this project's public deployment. No service was created, and no live URL or hosted test success is claimed yet.
+Live demo: https://expression-atlas-nilay.onrender.com
+
+Render Free, My Workspace, Singapore. Python 3.11.15; build `pip install -r requirements.txt`; start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. The service has no database, persisted image gallery or external model dependency. Auto-deploy is disabled; updates require a manual deploy in Render.
+
+The initial deployment reached `live` on 27 November 2026. Hosted checks verified the exact model SHA-256, evaluation data, public NASA sample prediction, blank-image behavior, invalid/unsupported/empty input handling, and security headers. The public sample returned Happy with score 0.991897 and a measured 711 ms server analysis time in this check. This is one observed request, not a throughput or latency guarantee. See `live-api-checks.json` for the recorded checks. Browser webcam use was tested locally only.
+
+Render Free services sleep after inactivity and share the workspace's free usage limits. No paid compute plan was selected. Source, weights, notebooks, reports and the live URL are committed to the original GitHub repository.
