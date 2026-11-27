@@ -4,6 +4,8 @@ A refined, interactive frontend for facial-expression recognition, built around 
 
 The original terminal-only project is preserved as a working CLI backed by the same inference service and preprocessing as the web app. No pretrained emotion-classification weights or simulated predictions are used. OpenCV’s Haar face detector is retained from the original project.
 
+![Expression Atlas studio](docs/studio.png)
+
 ## Run the studio
 
 Python 3.11 is recommended. The runtime uses lightweight ONNX inference, so TensorFlow is not required to run the website.
@@ -77,3 +79,5 @@ The tests cover image decoding, face detection, empty inputs, invalid formats, s
 This is a computer-vision portfolio and research demonstration. The labels describe visible facial-expression classes; they do not establish what someone feels. Model scores are not calibrated certainty. Pose, lighting, occlusion and dataset differences affect results.
 
 See [initial audit](docs/initial-audit.md), [design direction](docs/design-direction.md), and [asset/model credits](docs/asset-credits.md). Historical README accuracy and FPS figures were removed because the repository did not include evidence supporting them; current results come from the saved, held-out evaluation.
+
+See the [verification record](docs/verification.md) for completed checks and the public-deployment status.
