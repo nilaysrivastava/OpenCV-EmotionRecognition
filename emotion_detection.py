@@ -1,62 +1,93 @@
-import cv2
-import os
-import numpy as np
-import time
-from tensorflow.keras.models import load_model
+"""CLI entry point using the same model and preprocessing as the web studio."""
 
-print("Script started")
+import argparse
+import json
+from pathlib import Path
 
-# Load Model & Haar Cascade
-model_path = os.path.abspath("models/emotion_recognition_model.h5")
-print("Loading model from:", model_path)
+from app.inference import InputError, ModelService
 
-model = load_model(model_path, compile=False)
 
-face_cascade = cv2.CascadeClassifier(
-    cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
-)
+def main():
+    parser = argparse.ArgumentParser(
+        description="Recognize facial expressions with this project’s trained CNN."
+    )
+    parser.add_argument(
+        "--image", type=Path, help="Analyze one portrait and print JSON."
+    )
+    parser.add_argument(
+        "--model-dir", type=Path, default=Path(__file__).parent / "models"
+    )
+    parser.add_argument("--output", type=Path, help="Save the JSON observation.")
+    parser.add_argument(
+        "--camera",
+        type=int,
+        help="Open a local webcam (requires desktop opencv-python).",
+    )
+    args = parser.parse_args()
+    service = ModelService(args.model_dir)
+    if not service.status()["ready"]:
+        parser.exit(
+            2,
+            "Your trained model is not ready. Install its weights and model_config.json in models/. No replacement model is used.\n",
+        )
+    if args.image:
+        if not args.image.is_file():
+            parser.error("Image file not found.")
+        try:
+            result = service.analyze(args.image.read_bytes())
+        except (InputError, OSError) as exc:
+            parser.exit(2, str(exc) + "\n")
+        text = json.dumps(result, indent=2)
+        if args.output:
+            args.output.write_text(text + "\n")
+        print(text)
+        return
+    if args.camera is None:
+        parser.error(
+            "Choose --image IMAGE or --camera 0. For the browser interface, run python run.py."
+        )
+    import cv2
 
-emotion_labels = ["Angry", "Disgust", "Fear",
-                  "Happy", "Sad", "Surprise", "Neutral"]
+    cap = cv2.VideoCapture(args.camera)
+    if not cap.isOpened():
+        parser.exit(
+            2,
+            "Camera could not be opened. Check permission or use the browser interface.\n",
+        )
+    try:
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                break
+            encoded = cv2.imencode(".jpg", frame)[1].tobytes()
+            result = service.analyze(encoded)
+            sx = frame.shape[1] / result["width"]
+            sy = frame.shape[0] / result["height"]
+            for face in result["faces"]:
+                b = face["box"]
+                x, y, w, h = (
+                    int(b["x"] * sx),
+                    int(b["y"] * sy),
+                    int(b["width"] * sx),
+                    int(b["height"] * sy),
+                )
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (155, 210, 180), 2)
+                cv2.putText(
+                    frame,
+                    face["label"],
+                    (x, max(20, y - 8)),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.65,
+                    (155, 210, 180),
+                    2,
+                )
+            cv2.imshow("Expression Atlas", frame)
+            if cv2.waitKey(1) & 255 == ord("q"):
+                break
+    finally:
+        cap.release()
+        cv2.destroyAllWindows()
 
-print("Initializing camera...")
-cap = cv2.VideoCapture(0)  # Use 0 for the default webcam
 
-# FPS Calculation Variables
-fps_start_time = time.time()
-frame_count = 0
-
-while True:
-    frame_count += 1
-    ret, frame = cap.read()
-    if not ret:
-        print("Failed to access camera. Exiting...")
-        break
-
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(
-        gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-
-    for (x, y, w, h) in faces:
-        face_roi = cv2.resize(gray[y:y+h, x:x+w], (48, 48))
-        face_roi = face_roi.reshape(1, 48, 48, 1) / 255.0
-        emotion_label = emotion_labels[np.argmax(model.predict(face_roi))]
-
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        cv2.putText(frame, emotion_label, (x, y-10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-
-    # Calculate FPS
-    if frame_count >= 30:  # Measure FPS every 30 frames
-        fps = frame_count / (time.time() - fps_start_time)
-        print(f"FPS: {fps:.2f}")
-        fps_start_time = time.time()
-        frame_count = 0
-
-    cv2.imshow("Emotion Recognition", frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
-print("Script ended")
+if __name__ == "__main__":
+    main()

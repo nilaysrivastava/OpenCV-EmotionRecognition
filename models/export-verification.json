@@ -1,0 +1,8 @@
+{
+  "onnx_sha256": "f5773fae1cc6679d2dc0b1d2a7ea01130ce51fb2dcc4598b646edaba5df1764b",
+  "max_absolute_error": 2.1457672119140625e-06,
+  "parity_passed": true,
+  "samples": 16,
+  "same_top_class": true,
+  "pipeline_max_absolute_error": 1.430511474609375e-06
+}

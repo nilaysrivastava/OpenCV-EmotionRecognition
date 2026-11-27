@@ -1,0 +1,18 @@
+{
+  "source_rows": 35887,
+  "annotation_commit": "ae2128abf776409c93e50cf7c9d87180673314e6",
+  "original_csv_archive_sha256": "0053fdef247c8db3c1967c7a81898485eaa1d75489f43493fb4d8fa727f14698",
+  "annotation_sha256": "9206e20d62f56475939f516847d61753e4860caeac9718b560129541b776fc2c",
+  "training_images": 26529,
+  "validation_images": 3464,
+  "test_images": 3589,
+  "training_overlap_removed": 684,
+  "training_duplicates_merged": 1053,
+  "validation_test_overlap_removed": 46,
+  "invalid_training_annotations_removed": 443,
+  "split_protocol": "Original Training / PublicTest validation / PrivateTest held-out test",
+  "annotation_policy": "Seven supported classes with at least six valid votes; excluded-class votes are not reassigned. All remaining vote distributions are retained.",
+  "test_crowd_coverage": 0.983560880468097,
+  "test_consensus_coverage": 0.7578712733351909,
+  "exact_duplicate_leakage_after_cleaning": 0
+}

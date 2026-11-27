@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0d1420" />
+    <meta
+      name="description"
+      content="Expression Atlas — an interactive facial-expression studio, powered by a CNN trained from scratch by Nilay Srivastava."
+    />
+    <title>Expression Atlas — The expression studio</title>
+    <link rel="icon" href="/static/assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#studio">Skip to the studio</a>
+    <header>
+      <a class="brand" href="/" aria-label="Expression Atlas home"
+        ><img
+          src="/static/assets/mark.svg"
+          alt=""
+          width="32"
+          height="32"
+        /><span
+          >expression<span class="brand-sub"
+            >ATLAS / BY NILAY SRIVASTAVA</span
+          ></span
+        ></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="#studio" class="active">The studio</a
+        ><a href="#method">The method</a
+        ><button id="model-open">
+          Model notes <span aria-hidden="true">↗</span>
+        </button>
+      </nav>
+      <span class="header-note">TRAINED FROM SCRATCH / FER-2013</span>
+    </header>
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">
+            <span class="little-cross">✳</span> COMPUTER VISION / EXPERIMENT 001
+          </p>
+          <h1>SEE THE<br /><em>SIGNAL.</em></h1>
+        </div>
+        <div class="intro-note">
+          <span class="note-number">PIXELS → FEATURES → EXPRESSION</span>
+          <div class="class-count">
+            07<span>EXPRESSION<br />CLASSES</span>
+          </div>
+          <p>A custom CNN. A live experiment.</p>
+          <span
+            >Upload an image or connect your camera. Inspect what the model
+            sees, one face at a time.</span
+          >
+        </div>
+      </section>
+      <section id="studio" class="workspace" aria-labelledby="studio-title">
+        <div class="workspace-heading">
+          <div>
+            <p class="eyebrow">LIVE EXPERIMENT</p>
+            <h2 id="studio-title">Experiment console.</h2>
+          </div>
+          <span class="model-status" id="model-status"
+            ><i></i> Connecting to the model</span
+          >
+        </div>
+        <div class="studio-grid">
+          <div class="observation">
+            <div class="source-tabs" role="tablist" aria-label="Image source">
+              <button
+                id="upload-tab"
+                role="tab"
+                aria-selected="true"
+                aria-controls="stage-panel"
+              >
+                01 <span>Portrait upload</span></button
+              ><button
+                id="camera-tab"
+                role="tab"
+                aria-selected="false"
+                aria-controls="stage-panel"
+              >
+                02 <span>Live camera</span></button
+              ><span class="source-note" id="source-note"
+                >ONE IMAGE. SEVEN POSSIBILITIES.</span
+              >
+            </div>
+            <div
+              class="stage"
+              id="stage-panel"
+              role="tabpanel"
+              aria-labelledby="upload-tab"
+            >
+              <div class="stage-topline">
+                <span id="stage-label">THE OBSERVATION FRAME</span
+                ><span id="stage-indicator">WAITING FOR INPUT</span>
+              </div>
+              <div id="empty-stage">
+                <img
+                  class="face-study"
+                  src="/static/assets/face-study.svg"
+                  alt="Abstract line drawing of a face"
+                />
+                <p>Your input. Your experiment.</p>
+                <span>Drop an image into the frame to begin.</span
+                ><button class="button light" id="choose-image">
+                  Choose a portrait <span aria-hidden="true">↗</span></button
+                ><button id="sample-portrait" class="sample-button">
+                  Try a sample portrait</button
+                ><small>JPEG, PNG or WebP · up to 8 MB</small>
+              </div>
+              <div class="media-frame" id="media-frame" hidden>
+                <img id="preview" alt="Your selected portrait" /><video
+                  id="camera"
+                  playsinline
+                  muted
+                  hidden
+                  aria-label="Live camera preview"
+                ></video
+                ><canvas id="overlay" aria-label="Detected faces"></canvas>
+              </div>
+              <div id="camera-empty" hidden>
+                <span class="camera-symbol" aria-hidden="true">◎</span>
+                <p>Meet the model.</p>
+                <span>Your camera stays off until you choose to start.</span
+                ><button class="button light" id="start-camera">
+                  Start camera <span aria-hidden="true">↗</span></button
+                ><small
+                  >Frames are sent to this app for analysis and aren’t
+                  saved.</small
+                >
+              </div>
+              <div class="stage-bottomline">
+                <span>EXPRESSION ATLAS</span
+                ><span id="frame-details">FACE DETECTION + CUSTOM CNN</span>
+              </div>
+            </div>
+            <input
+              id="image-file"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              hidden
+              aria-label="Select a portrait"
+            />
+            <div class="observation-actions">
+              <span id="file-name">READY FOR IMAGE INPUT</span>
+              <div>
+                <button id="change-image" class="quiet" hidden>
+                  Change portrait</button
+                ><button id="stop-camera" class="quiet" hidden>
+                  Stop camera</button
+                ><button id="clear-input" class="quiet" hidden>Clear</button>
+              </div>
+            </div>
+            <p class="privacy-note">
+              <span aria-hidden="true">◈</span> Images are processed in memory.
+              No face gallery. No image storage.
+            </p>
+            <p
+              id="feedback"
+              role="status"
+              aria-live="polite"
+              class="feedback"
+            ></p>
+          </div>
+          <aside class="analysis" aria-labelledby="analysis-title">
+            <div class="analysis-top">
+              <span class="eyebrow">CLASSIFICATION OUTPUT</span
+              ><span class="live-tag" id="analysis-state">STANDBY</span>
+            </div>
+            <h3 id="analysis-title">Expression<br /><em>profile.</em></h3>
+            <div class="result-lead">
+              <span id="result-label">Awaiting a face</span
+              ><span id="result-score">—<small>MODEL SCORE</small></span>
+            </div>
+            <p id="result-caption">
+              Your observation will appear here. The scores describe the model’s
+              prediction, not how someone feels.
+            </p>
+            <div
+              id="face-picker"
+              class="face-picker"
+              aria-label="Choose a detected face"
+              hidden
+            ></div>
+            <div
+              id="score-list"
+              class="score-list"
+              aria-label="Expression scores"
+            ></div>
+            <div class="analysis-meta">
+              <span>FACES DETECTED <b id="face-count">—</b></span
+              ><span>ANALYSIS TIME <b id="latency">—</b></span>
+            </div>
+            <button id="export-result" class="export-button" disabled>
+              Download observation <span aria-hidden="true">↓</span>
+            </button>
+          </aside>
+        </div>
+      </section>
+      <section id="method" class="method">
+        <div>
+          <p class="eyebrow">SYSTEM ARCHITECTURE</p>
+          <h2>Inside the<br /><em>pipeline.</em></h2>
+          <p>
+            This is a study of visible facial expression. Light, pose, occlusion
+            and the data a model learns from all shape its interpretation.
+          </p>
+          <a
+            class="text-link"
+            href="https://github.com/nilaysrivastava/OpenCV-EmotionRecognition"
+            target="_blank"
+            rel="noopener"
+            >Explore the source <span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <ol class="pipeline">
+          <li>
+            <span>01</span>
+            <div>
+              <h3>Find the face.</h3>
+              <p>
+                OpenCV locates faces in the frame and isolates each region for
+                analysis.
+              </p>
+            </div>
+            <b>DETECT</b>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <h3>Look a little closer.</h3>
+              <p>
+                Each face becomes a 48 × 48 grayscale input, using the same
+                preprocessing as training.
+              </p>
+            </div>
+            <b>PREPARE</b>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <h3>Consider the possibilities.</h3>
+              <p>
+                A custom CNN trained from random initialization produces scores
+                for seven expression classes.
+              </p>
+            </div>
+            <b>INTERPRET</b>
+          </li>
+        </ol>
+      </section>
+      <section class="evaluation-section" id="evaluation" hidden>
+        <div class="evaluation-heading">
+          <div>
+            <p class="eyebrow">MEASURED PERFORMANCE / HELD-OUT DATA</p>
+            <h2>THE EVALUATION.</h2>
+          </div>
+          <p id="evaluation-protocol"></p>
+        </div>
+        <div class="evaluation-stats">
+          <div>
+            <span>TEST ACCURACY</span
+            ><strong id="evaluation-accuracy">—</strong>
+          </div>
+          <div><span>MACRO F1</span><strong id="evaluation-f1">—</strong></div>
+          <div>
+            <span>TEST IMAGES</span><strong id="evaluation-count">—</strong>
+          </div>
+          <div>
+            <span>ANNOTATION COVERAGE</span
+            ><strong id="evaluation-coverage">—</strong>
+          </div>
+        </div>
+        <div class="evaluation-grid">
+          <div>
+            <h3>Where predictions meet the reference.</h3>
+            <p>
+              Confusion matrix. Rows are reference labels; columns are
+              predictions.
+            </p>
+            <div class="matrix-scroll">
+              <table id="confusion-matrix">
+                <caption class="sr-only">
+                  Held-out confusion matrix
+                </caption>
+              </table>
+            </div>
+          </div>
+          <div>
+            <h3>Beyond one accuracy number.</h3>
+            <p>
+              Per-class scores reveal strengths and weaknesses across the
+              collection.
+            </p>
+            <table class="class-report" id="class-report">
+              <caption class="sr-only">
+                Precision, recall and F1 by expression
+              </caption>
+            </table>
+          </div>
+        </div>
+        <div id="comparison-panel" hidden>
+          <h3>Same test set. Two approaches.</h3>
+          <p>
+            Original FER2013 and crowd-labelled FERPlus results are reported
+            separately. They use different reference labels and must not be
+            treated as interchangeable benchmarks.
+          </p>
+          <div class="matrix-scroll">
+            <table class="comparison-table" id="model-comparison"></table>
+          </div>
+        </div>
+        <p class="evaluation-audit" id="evaluation-audit"></p>
+      </section>
+      <section class="closing-note">
+        <span class="eyebrow">INTERPRETATION PROTOCOL</span>
+        <p>
+          A prediction is a model output.<br /><em>Context still matters.</em>
+        </p>
+        <span
+          >Model scores aren’t calibrated certainty.<br />Explore with
+          curiosity, and interpret with care.</span
+        >
+      </section>
+    </main>
+    <footer>
+      <span>expression atlas.</span>
+      <p>A computer-vision project by Nilay Srivastava.</p>
+      <a href="#studio">Back to the studio ↑</a>
+    </footer>
+    <dialog id="model-dialog">
+      <div class="dialog-top">
+        <span class="eyebrow">RESEARCH NOTES / 01</span
+        ><button id="model-close" aria-label="Close model notes">×</button>
+      </div>
+      <h2>About the model.</h2>
+      <p id="model-description">
+        This project uses Nilay’s own CNN trained from scratch on FER-2013. No
+        pretrained emotion-recognition weights are used.
+      </p>
+      <dl id="model-details"></dl>
+      <p class="dialog-note">
+        The sample portrait is a public-domain NASA photograph of Eileen
+        Collins, distributed by scikit-image. Held-out metrics describe the
+        saved model’s test run. They do not measure accuracy for every person,
+        camera or setting.
+      </p>
+    </dialog>
+  </body>
+</html>

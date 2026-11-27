@@ -1,21 +1,29 @@
-import matplotlib.pyplot as plt
+"""Inspect preprocessed examples without assuming a fixed test-set size."""
+
+import argparse
+from pathlib import Path
+
 import numpy as np
 
-# Load the preprocessed data
-data = np.load("data/preprocessed_data.npz")
-X_test, y_test = data["X_test"], data["y_test"]
+from training import LABELS
 
-# Convert one-hot encoded labels back to categorical labels
-y_test_labels = np.argmax(y_test, axis=1)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--data", type=Path, default=Path("data/preprocessed_data.npz"))
+    parser.add_argument("--output", type=Path, default=Path("outputs/test-images.png"))
+    args = parser.parse_args()
+    if not args.data.exists():
+        parser.error("Preprocessed data not found. Run preprocess_data.py first.")
+    import matplotlib.pyplot as plt
 
-# Define emotion labels
-emotions = ["Angry", "Disgust", "Fear", "Happy", "Sad", "Surprise", "Neutral"]
-
-# Plot the first 5 test images with labels
-fig, axes = plt.subplots(1, 5, figsize=(10, 2))
-for i in range(5):
-    axes[i].imshow(X_test[i].squeeze(), cmap="gray")
-    axes[i].axis("off")
-    axes[i].set_title(emotions[y_test_labels[i]])
-
-plt.show(block=True)  # Ensure the window stays open
+    data = np.load(args.data)
+    n = min(7, len(data["X_test"]))
+    fig, axes = plt.subplots(1, n, figsize=(n * 2, 2), squeeze=False)
+    for i, ax in enumerate(axes[0]):
+        ax.imshow(data["X_test"][i].squeeze(), cmap="gray")
+        ax.set_title(LABELS[int(data["y_test"][i])])
+        ax.axis("off")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    fig.tight_layout()
+    fig.savefig(args.output, dpi=160)
+    print(args.output)

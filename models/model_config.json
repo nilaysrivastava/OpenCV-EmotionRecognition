@@ -1,0 +1,23 @@
+{
+  "labels": [
+    "Angry",
+    "Disgust",
+    "Fear",
+    "Happy",
+    "Sad",
+    "Surprise",
+    "Neutral"
+  ],
+  "input_size": [
+    48,
+    48
+  ],
+  "channels": 1,
+  "normalization": "embedded_0_255",
+  "owner": "Nilay Srivastava",
+  "architecture": "nilay_ferplus_residual_se",
+  "trained_from_scratch": true,
+  "test_time_augmentation": true,
+  "dataset": "FERPlus",
+  "annotation_commit": "ae2128abf776409c93e50cf7c9d87180673314e6"
+}

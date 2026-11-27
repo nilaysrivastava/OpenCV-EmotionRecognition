@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+data/
+models/*.h5
+models/*.keras
+models/*.onnx
+outputs/
+.env
+models/baseline/
+models/improved/
+!models/emotion_recognition_model.onnx
+.ruff_cache/
